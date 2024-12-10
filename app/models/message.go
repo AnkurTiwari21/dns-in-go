@@ -74,12 +74,12 @@ func (h *Header) SetFlagsWithResponseBytes(responseBytes []byte) []byte {
 		flagsToBeReturned |= (uint16(1) << 8)
 	}
 	fmt.Print("final flag in binary -- ")
-	fmt.Printf("%08b",flagsToBeReturned)
+	fmt.Printf("%v",flagsToBeReturned)
 	fmt.Print(" -- ")
 	commonFlagsBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(commonFlagsBytes, flagsToBeReturned)
 
-	fmt.Printf(",,,%08b,,,,",commonFlagsBytes)
+	fmt.Printf(",,,%v,,,,",commonFlagsBytes)
 	return commonFlagsBytes
 }
 
