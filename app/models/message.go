@@ -69,7 +69,7 @@ func (q *Question) SetName(name string) {
 		namee += val
 	}
 	namee += "\x00"
-	// fmt.Printf("name is %q", namee)
+	fmt.Printf("name is %v", []byte(namee))
 	q.Name = namee
 }
 
@@ -80,13 +80,14 @@ func (q *Question) SetTypeAndClassAndReturnQuestionBytes(typ uint16, clas uint16
 	classBuf := make([]byte, 2)
 	binary.BigEndian.PutUint16(classBuf, clas)
 
-	commonBuf := new(bytes.Buffer)
+	commonBuf := []byte(q.Name)
+	commonBuf = append(commonBuf, typeBuf...)
+	// commonBuf.Write([]byte(q.Name))
+	// commonBuf.Write(typeBuf)
+	// commonBuf.Write(classBuf)
 
-	commonBuf.Write([]byte(q.Name))
-	commonBuf.Write(typeBuf)
-	commonBuf.Write(classBuf)
-
-	return commonBuf.Bytes()
+	commonBuf = append(commonBuf, classBuf...)
+	return commonBuf
 }
 
 func ConvertNumToHexString(num uint8) string {
