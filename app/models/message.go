@@ -80,7 +80,7 @@ func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte) []byte {
 	returnResponseBytes[1] = responseBytes[1]
 
 	fmt.Print("my resp")
-	fmt.Print("%v",returnResponseBytes)
+	fmt.Print(returnResponseBytes)
 
 	flagResponse := h.SetFlagsWithResponseBytes(responseBytes)
 	returnResponseBytes[3] = flagResponse[0]
