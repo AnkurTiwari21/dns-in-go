@@ -92,32 +92,32 @@ func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte) []byte {
 	// fmt.Print(returnResponseBytes)
 
 	flagResponse := h.SetFlagsWithResponseBytes(responseBytes)
-	returnResponseBytes[3] = flagResponse[0]
-	returnResponseBytes[4] = flagResponse[1]
+	returnResponseBytes[2] = flagResponse[0]
+	returnResponseBytes[3] = flagResponse[1]
 
 	questionBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(questionBytes, 0)
 	// returnResponseBytes = append(returnResponseBytes, questionBytes...)
-	returnResponseBytes[3] = questionBytes[0]
-	returnResponseBytes[4] = questionBytes[1]
+	returnResponseBytes[4] = questionBytes[0]
+	returnResponseBytes[5] = questionBytes[1]
 
 	answerRecordBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(answerRecordBytes, 0)
 	// returnResponseBytes = append(returnResponseBytes, answerRecordBytes...)
-	returnResponseBytes[3] = answerRecordBytes[0]
-	returnResponseBytes[4] = answerRecordBytes[1]
+	returnResponseBytes[6] = answerRecordBytes[0]
+	returnResponseBytes[7] = answerRecordBytes[1]
 
 	authorityRecordBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(authorityRecordBytes, 0)
 	// returnResponseBytes = append(returnResponseBytes, authorityRecordBytes...)
-	returnResponseBytes[3] = authorityRecordBytes[0]
-	returnResponseBytes[4] = authorityRecordBytes[1]
+	returnResponseBytes[8] = authorityRecordBytes[0]
+	returnResponseBytes[9] = authorityRecordBytes[1]
 
 	additionalRecordBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(additionalRecordBytes, 0)
 	// returnResponseBytes = append(returnResponseBytes, additionalRecordBytes...)
-	returnResponseBytes[3] = additionalRecordBytes[0]
-	returnResponseBytes[4] = additionalRecordBytes[1]
+	returnResponseBytes[10] = additionalRecordBytes[0]
+	returnResponseBytes[11] = additionalRecordBytes[1]
 
 	return returnResponseBytes
 }
