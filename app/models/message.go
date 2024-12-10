@@ -53,7 +53,8 @@ func (h *Header) Bytes(PacketIdentifier, Flags, QuestionCount, AnswerRecordCount
 func (h *Header) SetFlagsWithResponseBytes(responseBytes []byte) []byte {
 	flags := make([]byte, 2)
 	//flags will contain byte1 and 2 of response byte
-	flags = append(flags, responseBytes[2:4]...)
+	flags[0] = responseBytes[2]
+	flags[1] = responseBytes[3]
 	fmt.Print("------")
 	fmt.Print(flags)
 	fmt.Print("------")
