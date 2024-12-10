@@ -61,7 +61,7 @@ func (h *Header) SetFlagsWithResponseBytes(responseBytes []byte) []byte {
 	// 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 	flagsToBeReturned := uint16(0)
 	flagsToBeReturned |= (uint16(1) << 15)
-
+	fmt.Printf("flag to be returned %v",flagsToBeReturned)
 	//mimic next 4 bits
 	for _, val := range []int{14, 13, 12, 11} {
 		if binary.BigEndian.Uint16(flags)&(1<<val) != 0 {
