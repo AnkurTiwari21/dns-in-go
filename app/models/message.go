@@ -55,7 +55,7 @@ func (h *Header) SetFlagsWithResponseBytes(responseBytes []byte) []byte {
 	//flags will contain byte1 and 2 of response byte
 	flags = append(flags, responseBytes[1:3]...)
 	fmt.Print("------")
-	fmt.Println(flags)
+	fmt.Print(flags)
 	fmt.Print("------")
 	// 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 	flagsToBeReturned := uint16(0)
