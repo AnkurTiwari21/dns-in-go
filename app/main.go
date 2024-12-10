@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net"
 
@@ -43,26 +42,12 @@ func main() {
 		fmt.Printf("Received %d bytes from %s: %s\n", size, source, receivedData)
 
 		// Create an empty response
-		// response := []byte{}
 		response := models.Message{
-			Header: models.Header{
-				PacketIdentifier:      1234,
-				QueryIndicator:        1,
-				OperationCode:         0,
-				AuthoritativeAnswer:   0,
-				Truncation:            0,
-				RecursionDesired:      0,
-				RecursionAvailable:    0,
-				Reserved:              0,
-				ResponseCode:          0,
-				QuestionCount:         0,
-				AnswerRecordCount:     0,
-				AuthorityRecordCount:  0,
-				AdditionalRecordCount: 0,
-			},
+			Header: models.Header{},
 		}
-		responseMarshalled, _ := json.Marshal(response)
-		_, err = udpConn.WriteToUDP(responseMarshalled, source)
+		response.Header.SetFlags(1, 0, 0, 0, 0, 0, 0, 0)
+		responseBytes := response.Header.Bytes(1234, 0, 0, 0, 0, 0)
+		_, err = udpConn.WriteToUDP(responseBytes, source)
 		if err != nil {
 			fmt.Println("Failed to send response:", err)
 		}
