@@ -62,13 +62,13 @@ type Question struct {
 }
 
 func (q *Question) SetName(name string) {
-	namee := "" //the name which we gonna assign to the question
+	namee := `` //the name which we gonna assign to the question
 	url := strings.Split(name, ".")
 	for _, val := range url {
 		namee += ConvertNumToHexString(uint8(len(val)))
 		namee += val
 	}
-	namee += "\x00"
+	namee += `\x00`
 	fmt.Printf("name is %v", []byte(namee))
 	q.Name = namee
 }
@@ -103,10 +103,10 @@ func ConvertNumToHexString(num uint8) string {
 	// Get the byte slice
 	byteSlice := buf.Bytes()
 
-	str := ""
+	str := ``
 	// Print the byte slice with \x format
 	for _, b := range byteSlice {
-		str = fmt.Sprintf("\\x%02x", b)
+		str = fmt.Sprintf(`\\x%02x`, b)
 	}
 	return str
 }
