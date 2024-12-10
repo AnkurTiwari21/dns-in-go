@@ -50,6 +50,56 @@ func (h *Header) Bytes(PacketIdentifier, Flags, QuestionCount, AnswerRecordCount
 	return buf
 }
 
+func (h *Header) SetFlagsWithResponseBytes(responseBytes []byte) []byte {
+	flags := make([]byte, 2)
+	//flags will contain byte1 and 2 of response byte
+	flags = append(flags, responseBytes[1:3]...)
+	// 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+	flagsToBeReturned := uint16(0)
+	flagsToBeReturned |= (uint16(1) << 15)
+
+	//mimic next 4 bits
+	for _, val := range []int{14, 13, 12, 11} {
+		if binary.BigEndian.Uint16(flags)&(1<<val) != 0 {
+			flagsToBeReturned |= (1 << val)
+		}
+	}
+
+	//mimic 7th bit
+	if binary.BigEndian.Uint16(flags)&(1<<7) != 0 {
+		flagsToBeReturned |= (1 << 7)
+	}
+	commonFlagsBytes := make([]byte, 2)
+	binary.BigEndian.PutUint16(commonFlagsBytes, flagsToBeReturned)
+	return commonFlagsBytes
+}
+
+func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte) []byte {
+	returnResponseBytes := make([]byte, 12)
+	returnResponseBytes = append(returnResponseBytes, responseBytes[0:2]...)
+
+	flagResponse := h.SetFlagsWithResponseBytes(responseBytes)
+	returnResponseBytes = append(returnResponseBytes, flagResponse...)
+
+	questionBytes := make([]byte, 2)
+	binary.BigEndian.PutUint16(questionBytes, 1)
+	returnResponseBytes = append(returnResponseBytes, questionBytes...)
+
+	answerRecordBytes := make([]byte, 2)
+	binary.BigEndian.PutUint16(answerRecordBytes, 1)
+	returnResponseBytes = append(returnResponseBytes, answerRecordBytes...)
+
+	authorityRecordBytes := make([]byte, 2)
+	binary.BigEndian.PutUint16(authorityRecordBytes, 0)
+	returnResponseBytes = append(returnResponseBytes, authorityRecordBytes...)
+
+	additionalRecordBytes := make([]byte, 2)
+	binary.BigEndian.PutUint16(additionalRecordBytes, 0)
+	returnResponseBytes = append(returnResponseBytes, additionalRecordBytes...)
+
+	return returnResponseBytes
+}
+
 func (m *Message) Bytes(headerBytes []byte) []byte {
 	b := new(bytes.Buffer)
 	b.Write(headerBytes)
@@ -127,19 +177,19 @@ type Answer struct {
 func (a *Answer) FillAnswerAndReturnBytes() []byte {
 	nameBytes := SetName("codecrafters.io")
 
-	typeBytes := make([]byte,2)
+	typeBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(typeBytes, uint16(1))
 
-	classBytes :=  make([]byte,2)
+	classBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(classBytes, uint16(1))
 
-	ttlBytes :=  make([]byte,4)
+	ttlBytes := make([]byte, 4)
 	binary.BigEndian.PutUint32(ttlBytes, uint32(60))
 
-	lengthBytes :=  make([]byte,2)
+	lengthBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(lengthBytes, uint16(4))
 
-	dataBytes :=  make([]byte,4)
+	dataBytes := make([]byte, 4)
 
 	ip := "8.8.8.8"
 	urlSplit := strings.Split(ip, ".")
