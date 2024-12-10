@@ -76,7 +76,8 @@ func (h *Header) SetFlagsWithResponseBytes(responseBytes []byte) []byte {
 
 func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte) []byte {
 	returnResponseBytes := make([]byte, 12)
-	returnResponseBytes = append(returnResponseBytes, responseBytes[0:2]...)
+	returnResponseBytes[0] = responseBytes[0]
+	returnResponseBytes[1] = responseBytes[1]
 
 	fmt.Print("my resp")
 	fmt.Print("%v",returnResponseBytes)
