@@ -55,9 +55,6 @@ func (h *Header) SetFlagsWithResponseBytes(responseBytes []byte) []byte {
 	//flags will contain byte1 and 2 of response byte
 	flags[0] = responseBytes[2]
 	flags[1] = responseBytes[3]
-	fmt.Print("------")
-	fmt.Print(flags)
-	fmt.Print("------")
 	// 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 	flagsToBeReturned := uint16(0)
 	flagsToBeReturned |= (uint16(1) << 15)
@@ -87,7 +84,7 @@ func (h *Header) SetFlagsWithResponseBytes(responseBytes []byte) []byte {
 	return commonFlagsBytes
 }
 
-func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte) []byte {
+func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte,size int) []byte {
 	returnResponseBytes := make([]byte, 12)
 	returnResponseBytes[0] = responseBytes[0]
 	returnResponseBytes[1] = responseBytes[1]
@@ -100,13 +97,13 @@ func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte) []byte {
 	returnResponseBytes[3] = flagResponse[1]
 
 	questionBytes := make([]byte, 2)
-	binary.BigEndian.PutUint16(questionBytes, 1)
+	binary.BigEndian.PutUint16(questionBytes, uint16(size))
 	// returnResponseBytes = append(returnResponseBytes, questionBytes...)
 	returnResponseBytes[4] = questionBytes[0]
 	returnResponseBytes[5] = questionBytes[1]
 
 	answerRecordBytes := make([]byte, 2)
-	binary.BigEndian.PutUint16(answerRecordBytes, 1)
+	binary.BigEndian.PutUint16(answerRecordBytes, uint16(size))
 	// returnResponseBytes = append(returnResponseBytes, answerRecordBytes...)
 	returnResponseBytes[6] = answerRecordBytes[0]
 	returnResponseBytes[7] = answerRecordBytes[1]
