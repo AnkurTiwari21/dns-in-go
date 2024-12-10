@@ -106,7 +106,7 @@ func ConvertNumToHexString(num uint8) string {
 	str := ``
 	// Print the byte slice with \x format
 	for _, b := range byteSlice {
-		str = fmt.Sprintf(`\\x%02x`, b)
+		str = fmt.Sprintf(`\x%02x`, b)
 	}
 	return str
 }
