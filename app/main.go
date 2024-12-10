@@ -44,13 +44,12 @@ func main() {
 
 		// Create an empty response
 		response := models.Message{
-			Header: models.Header{
-				PacketIdentifier: binary.BigEndian.Uint16(buf[0:2]),
+			Header: &models.Header{
+				ID: binary.BigEndian.Uint16(buf[0:2]),
 			},
 		}
 		response.Header.SetFlags(1, 0, 0, 0, 0, 0, 0, 0)
-		responseBytes := response.Header.Bytes(1234, 0, 0, 0, 0, 0)
-		_, err = udpConn.WriteToUDP(responseBytes, source)
+		_, err = udpConn.WriteToUDP(response.Bytes(), source)
 		if err != nil {
 			fmt.Println("Failed to send response:", err)
 		}
