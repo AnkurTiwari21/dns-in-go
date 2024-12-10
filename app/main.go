@@ -45,7 +45,7 @@ func main() {
 		// Create an empty response
 		response := models.Message{
 			Header: models.Header{
-				PacketIdentifier: binary.BigEndian.Uint16(buf[0:2]),
+				// PacketIdentifier: binary.BigEndian.Uint16(buf[0:2]),
 			},
 		}
 		response.Header.SetFlags(1, 0, 0, 0, 0, 0, 0, 0)
