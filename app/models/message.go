@@ -70,11 +70,11 @@ func (h *Header) SetFlagsWithResponseBytes(responseBytes []byte) []byte {
 	}
 
 	//mimic 7th bit
-	if binary.BigEndian.Uint16(flags)&(uint16(1)<<7) != 0 {
-		flagsToBeReturned |= (uint16(1) << 7)
+	if binary.BigEndian.Uint16(flags)&(uint16(1)<<8) != 0 {
+		flagsToBeReturned |= (uint16(1) << 8)
 	}
 	fmt.Print("final flag in binary -- ")
-	fmt.Print("%08b",flagsToBeReturned)
+	fmt.Printf("%08b",flagsToBeReturned)
 	fmt.Print(" -- ")
 	commonFlagsBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(commonFlagsBytes, flagsToBeReturned)
