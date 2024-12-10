@@ -88,19 +88,27 @@ func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte) []byte {
 
 	questionBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(questionBytes, 1)
-	returnResponseBytes = append(returnResponseBytes, questionBytes...)
+	// returnResponseBytes = append(returnResponseBytes, questionBytes...)
+	returnResponseBytes[3] = questionBytes[0]
+	returnResponseBytes[4] = questionBytes[1]
 
 	answerRecordBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(answerRecordBytes, 1)
-	returnResponseBytes = append(returnResponseBytes, answerRecordBytes...)
+	// returnResponseBytes = append(returnResponseBytes, answerRecordBytes...)
+	returnResponseBytes[3] = answerRecordBytes[0]
+	returnResponseBytes[4] = answerRecordBytes[1]
 
 	authorityRecordBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(authorityRecordBytes, 0)
-	returnResponseBytes = append(returnResponseBytes, authorityRecordBytes...)
+	// returnResponseBytes = append(returnResponseBytes, authorityRecordBytes...)
+	returnResponseBytes[3] = authorityRecordBytes[0]
+	returnResponseBytes[4] = authorityRecordBytes[1]
 
 	additionalRecordBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(additionalRecordBytes, 0)
-	returnResponseBytes = append(returnResponseBytes, additionalRecordBytes...)
+	// returnResponseBytes = append(returnResponseBytes, additionalRecordBytes...)
+	returnResponseBytes[3] = additionalRecordBytes[0]
+	returnResponseBytes[4] = additionalRecordBytes[1]
 
 	return returnResponseBytes
 }
