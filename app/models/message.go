@@ -127,23 +127,24 @@ type Answer struct {
 func (a *Answer) FillAnswerAndReturnBytes() []byte {
 	nameBytes := SetName("codecrafters.io")
 
-	typeBytes := []byte{}
+	typeBytes := make([]byte,2)
 	binary.BigEndian.PutUint16(typeBytes, uint16(1))
 
-	classBytes := []byte{}
+	classBytes :=  make([]byte,2)
 	binary.BigEndian.PutUint16(classBytes, uint16(1))
 
-	ttlBytes := []byte{}
-	binary.BigEndian.PutUint16(ttlBytes, uint16(60))
+	ttlBytes :=  make([]byte,4)
+	binary.BigEndian.PutUint32(ttlBytes, uint32(60))
 
-	lengthBytes := []byte{}
+	lengthBytes :=  make([]byte,2)
 	binary.BigEndian.PutUint16(lengthBytes, uint16(4))
 
-	dataBytes := []byte{}
+	dataBytes :=  make([]byte,4)
 
 	ip := "8.8.8.8"
 	urlSplit := strings.Split(ip, ".")
 	for _, val := range urlSplit {
+		// bigEndianForm := make([]byte,1)
 		num, _ := strconv.Atoi(val)
 		dataBytes = append(dataBytes, byte(num))
 	}
