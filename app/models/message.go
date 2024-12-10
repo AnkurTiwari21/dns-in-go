@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -84,7 +83,7 @@ func (h *Header) SetFlagsWithResponseBytes(responseBytes []byte) []byte {
 	return commonFlagsBytes
 }
 
-func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte,size int) []byte {
+func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte, size int) []byte {
 	returnResponseBytes := make([]byte, 12)
 	returnResponseBytes[0] = responseBytes[0]
 	returnResponseBytes[1] = responseBytes[1]
@@ -214,13 +213,13 @@ func (a *Answer) FillAnswerAndReturnBytes(domainName string) []byte {
 
 	dataBytes := make([]byte, 4)
 
-	ip := "8.8.8.8"
-	urlSplit := strings.Split(ip, ".")
-	for _, val := range urlSplit {
-		// bigEndianForm := make([]byte,1)
-		num, _ := strconv.Atoi(val)
-		dataBytes = append(dataBytes, byte(num))
-	}
+	// ip := "18.8.8.8"
+	// urlSplit := strings.Split(ip, ".")
+	// for _, val := range urlSplit {
+	// 	// bigEndianForm := make([]byte,1)
+	// 	num, _ := strconv.Atoi(val)
+	// 	dataBytes = append(dataBytes, byte(uint8(num)))
+	// }
 
 	commonBytes := []byte{}
 	commonBytes = append(commonBytes, nameBytes...)
