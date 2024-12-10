@@ -59,6 +59,8 @@ func main() {
 		answerBytes := response.Answer.FillAnswerAndReturnBytes()
 		responseBytes = append(responseBytes, answerBytes...)
 
+		fmt.Print("-------")
+		fmt.Print(responseBytes)
 		_, err = udpConn.WriteToUDP(responseBytes, source)
 		if err != nil {
 			fmt.Println("Failed to send response:", err)
