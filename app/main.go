@@ -39,7 +39,9 @@ func main() {
 		}
 
 		receivedData := string(buf[:size])
-		fmt.Print(buf[:size])
+		for _, b := range buf[:size] {
+			fmt.Printf("%08b\n", b)
+		}
 		fmt.Printf("Received %d bytes from %s: %s\n", size, source, receivedData)
 
 		// Create an empty response
@@ -60,7 +62,9 @@ func main() {
 		// responseBytes = append(responseBytes, answerBytes...)
 
 		fmt.Print("-------")
-		fmt.Print(responseBytes)
+		for _, b := range responseBytes {
+			fmt.Printf("%08b\n", b)
+		}
 		fmt.Print(len(responseBytes))
 		_, err = udpConn.WriteToUDP(responseBytes, source)
 		if err != nil {
