@@ -50,8 +50,7 @@ func main() {
 		headerBytes := response.Header.Bytes(1234, response.Header.Flags, 1, 0, 0, 0) //sending remaining data and getting header bytes
 		responseBytes := response.Bytes(headerBytes)
 
-		response.Question.SetName("codecrafters.io")
-		questionBytes:=response.Question.SetTypeAndClassAndReturnQuestionBytes(1,1)
+		questionBytes:=response.Question.SetAllDataAndReturnQuestionBytes("codecrafters.io",1,1)
 		responseBytes = append(responseBytes, questionBytes...) //appending question bytes
 
 		_, err = udpConn.WriteToUDP(responseBytes, source)

@@ -61,26 +61,29 @@ type Question struct {
 	Class uint16 `json:"class"`
 }
 
-func (q *Question) SetName(name string) {
-	namee := `` //the name which we gonna assign to the question
+func (q *Question) SetName(name string) []byte {
+	namee := []byte{} //the name which we gonna assign to the question
 	url := strings.Split(name, ".")
 	for _, val := range url {
-		namee += ConvertNumToHexString(uint8(len(val)))
-		namee += val
+		namee = append(namee, byte(len(val)))
+		namee = append(namee, []byte(val)...)
 	}
-	namee += `\x00`
+	namee = append(namee, 0x00)
 	fmt.Printf("name is %v", []byte(namee))
-	q.Name = namee
+	return namee
 }
 
-func (q *Question) SetTypeAndClassAndReturnQuestionBytes(typ uint16, clas uint16) []byte {
+func (q *Question) SetAllDataAndReturnQuestionBytes(name string, typ uint16, clas uint16) []byte {
+	nameByte := q.SetName(name)
+
 	typeBuf := make([]byte, 2)
 	binary.BigEndian.PutUint16(typeBuf, typ)
 
 	classBuf := make([]byte, 2)
 	binary.BigEndian.PutUint16(classBuf, clas)
 
-	commonBuf := []byte(q.Name)
+	commonBuf := []byte{}
+	commonBuf = append(commonBuf, nameByte...)
 	commonBuf = append(commonBuf, typeBuf...)
 	// commonBuf.Write([]byte(q.Name))
 	// commonBuf.Write(typeBuf)
