@@ -69,7 +69,7 @@ func (q *Question) SetName(name string) {
 		namee += val
 	}
 	namee += "\x00"
-	fmt.Print("name is ", namee)
+	fmt.Printf("name is %q", namee)
 	q.Name = namee
 }
 
