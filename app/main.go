@@ -53,11 +53,11 @@ func main() {
 		headerBytes := response.Header.SetRemainingDataAndReturnBytes(buf[:size]) //sending remaining data and getting header bytes
 		responseBytes := response.Bytes(headerBytes)
 
-		questionBytes := response.Question.SetAllDataAndReturnQuestionBytes("codecrafters.io", 1, 1)
-		responseBytes = append(responseBytes, questionBytes...) //appending question bytes
+		// questionBytes := response.Question.SetAllDataAndReturnQuestionBytes("codecrafters.io", 1, 1)
+		// responseBytes = append(responseBytes, questionBytes...) //appending question bytes
 
-		answerBytes := response.Answer.FillAnswerAndReturnBytes()
-		responseBytes = append(responseBytes, answerBytes...)
+		// answerBytes := response.Answer.FillAnswerAndReturnBytes()
+		// responseBytes = append(responseBytes, answerBytes...)
 
 		fmt.Print("-------")
 		fmt.Print(responseBytes)
