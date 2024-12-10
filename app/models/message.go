@@ -9,11 +9,11 @@ import (
 )
 
 type Message struct {
-	Header         Header   `json:"header"`
-	Question       Question `json:"question"`
-	Answer         Answer   `json:"answer"`
-	Authority      string   `json:"authority"`
-	AdditionalData string   `json:"additional"`
+	Header   Header   `json:"header"`
+	Question Question `json:"question"`
+	Answer   Answer   `json:"answer"`
+	// Authority      string   `json:"authority"`
+	// AdditionalData string   `json:"additional"`
 }
 
 type Header struct {
@@ -50,7 +50,7 @@ func (h *Header) Bytes(PacketIdentifier, Flags, QuestionCount, AnswerRecordCount
 	return buf
 }
 
-func (h *Header) SetFlagsWithResponseBytes(responseBytes []byte) ([]byte) {
+func (h *Header) SetFlagsWithResponseBytes(responseBytes []byte) []byte {
 	flags := make([]byte, 2)
 	//flags will contain byte1 and 2 of response byte
 	flags[0] = responseBytes[2]
@@ -200,8 +200,8 @@ type Answer struct {
 	Data   uint32 `json:"data"`
 }
 
-func (a *Answer) FillAnswerAndReturnBytes() []byte {
-	nameBytes := SetName("codecrafters.io")
+func (a *Answer) FillAnswerAndReturnBytes(domainName string) []byte {
+	nameBytes := SetName(domainName)
 
 	typeBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(typeBytes, uint16(1))

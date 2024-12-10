@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net"
 
@@ -44,19 +45,18 @@ func main() {
 
 		// Create an empty response
 		response := models.Message{
-			Header:   models.Header{},
 			Question: models.Question{},
-			Answer:   models.Answer{},
 		}
-		
-		// response.Header.SetFlags(1, 0, 0, 0, 0, 0, 0, 0)                              //setting up flag
+		bytesExceptHeader := buf[12:size]
+		domainNameBytes,_ := DecodeDNSName(bytesExceptHeader,0)
+		                             //setting up flag
 		headerBytes := response.Header.SetRemainingDataAndReturnBytes(buf[:size]) //sending remaining data and getting header bytes
 		responseBytes := response.Bytes(headerBytes)
 
-		questionBytes := response.Question.SetAllDataAndReturnQuestionBytes("codecrafters.io", 1, 1)
+		questionBytes := response.Question.SetAllDataAndReturnQuestionBytes(string(domainNameBytes), 1, 1)
 		responseBytes = append(responseBytes, questionBytes...) //appending question bytes
 
-		answerBytes := response.Answer.FillAnswerAndReturnBytes()
+		answerBytes := response.Answer.FillAnswerAndReturnBytes(string(domainNameBytes))
 		responseBytes = append(responseBytes, answerBytes...)
 
 		// fmt.Print("<------->")
@@ -68,4 +68,25 @@ func main() {
 			fmt.Println("Failed to send response:", err)
 		}
 	}
+}
+
+func DecodeDNSName(data []byte, start int) (string, int) {
+	var name bytes.Buffer
+	pos := start
+
+	for {
+		length := int(data[pos])
+		if length == 0 {
+			// End of the name (0x00)
+			pos++
+			break
+		}
+		pos++
+		name.Write(data[pos : pos+length])
+		pos += length
+		if data[pos] != 0 {
+			name.WriteByte('.')
+		}
+	}
+	return name.String(), pos
 }
