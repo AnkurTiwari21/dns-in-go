@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
 type Message struct {
 	Header         Header   `json:"header"`
 	Question       Question `json:"question"`
-	Answer         string   `json:"answer"`
+	Answer         Answer   `json:"answer"`
 	Authority      string   `json:"authority"`
 	AdditionalData string   `json:"additional"`
 }
@@ -61,7 +62,7 @@ type Question struct {
 	Class uint16 `json:"class"`
 }
 
-func (q *Question) SetName(name string) []byte {
+func SetName(name string) []byte {
 	namee := []byte{} //the name which we gonna assign to the question
 	url := strings.Split(name, ".")
 	for _, val := range url {
@@ -74,7 +75,7 @@ func (q *Question) SetName(name string) []byte {
 }
 
 func (q *Question) SetAllDataAndReturnQuestionBytes(name string, typ uint16, clas uint16) []byte {
-	nameByte := q.SetName(name)
+	nameByte := SetName(name)
 
 	typeBuf := make([]byte, 2)
 	binary.BigEndian.PutUint16(typeBuf, typ)
@@ -112,4 +113,49 @@ func ConvertNumToHexString(num uint8) string {
 		str = fmt.Sprintf(`\x%02x`, b)
 	}
 	return str
+}
+
+type Answer struct {
+	Name   string `json:"name"`
+	Type   uint16 `json:"type"`
+	Class  uint16 `json:"class"`
+	TTL    uint32 `json:"ttl"`
+	Length uint16 `json:"length"`
+	Data   uint32 `json:"data"`
+}
+
+func (a *Answer) FillAnswerAndReturnBytes() []byte {
+	nameBytes := SetName("codecrafters.io")
+
+	typeBytes := []byte{}
+	binary.BigEndian.PutUint16(typeBytes, uint16(1))
+
+	classBytes := []byte{}
+	binary.BigEndian.PutUint16(classBytes, uint16(1))
+
+	ttlBytes := []byte{}
+	binary.BigEndian.PutUint16(ttlBytes, uint16(60))
+
+	lengthBytes := []byte{}
+	binary.BigEndian.PutUint16(lengthBytes, uint16(4))
+
+	dataBytes := []byte{}
+
+	ip := "8.8.8.8"
+	urlSplit := strings.Split(ip, ".")
+	for _, val := range urlSplit {
+		num, _ := strconv.Atoi(val)
+		dataBytes = append(dataBytes, byte(num))
+	}
+
+	commonBytes := []byte{}
+	commonBytes = append(commonBytes, nameBytes...)
+	commonBytes = append(commonBytes, typeBytes...)
+	commonBytes = append(commonBytes, classBytes...)
+	commonBytes = append(commonBytes, ttlBytes...)
+	commonBytes = append(commonBytes, lengthBytes...)
+	commonBytes = append(commonBytes, dataBytes...)
+
+	return commonBytes
+
 }

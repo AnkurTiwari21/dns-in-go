@@ -45,13 +45,17 @@ func main() {
 		response := models.Message{
 			Header: models.Header{},
 			Question: models.Question{},
+			Answer: models.Answer{},
 		}
 		response.Header.SetFlags(1, 0, 0, 0, 0, 0, 0, 0)                              //setting up flag
-		headerBytes := response.Header.Bytes(1234, response.Header.Flags, 1, 0, 0, 0) //sending remaining data and getting header bytes
+		headerBytes := response.Header.Bytes(1234, response.Header.Flags, 1, 1, 0, 0) //sending remaining data and getting header bytes
 		responseBytes := response.Bytes(headerBytes)
 
 		questionBytes:=response.Question.SetAllDataAndReturnQuestionBytes("codecrafters.io",1,1)
 		responseBytes = append(responseBytes, questionBytes...) //appending question bytes
+
+		answerBytes := response.Answer.FillAnswerAndReturnBytes()
+		responseBytes = append(responseBytes, answerBytes...)
 
 		_, err = udpConn.WriteToUDP(responseBytes, source)
 		if err != nil {
