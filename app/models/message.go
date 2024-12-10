@@ -47,8 +47,8 @@ func (h *Header) Bytes(PacketIdentifier, Flags, QuestionCount, AnswerRecordCount
 	return buf
 }
 
-func (m *Message) Bytes() []byte {
+func (m *Message) Bytes(headerBytes []byte) []byte {
 	b := new(bytes.Buffer)
-	b.Write(m.Header.Bytes(1234,m.Header.Flags,0,0,0,0))
+	b.Write(headerBytes)
 	return b.Bytes()
 }
