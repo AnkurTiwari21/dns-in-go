@@ -47,6 +47,7 @@ func main() {
 			Question: models.Question{},
 			Answer:   models.Answer{},
 		}
+		fmt.Print("%v",buf[0:2])
 		// response.Header.SetFlags(1, 0, 0, 0, 0, 0, 0, 0)                              //setting up flag
 		headerBytes := response.Header.SetRemainingDataAndReturnBytes(buf[:size]) //sending remaining data and getting header bytes
 		responseBytes := response.Bytes(headerBytes)

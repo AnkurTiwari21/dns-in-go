@@ -78,6 +78,9 @@ func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte) []byte {
 	returnResponseBytes := make([]byte, 12)
 	returnResponseBytes = append(returnResponseBytes, responseBytes[0:2]...)
 
+	fmt.Print("my resp")
+	fmt.Print("%v",returnResponseBytes)
+
 	flagResponse := h.SetFlagsWithResponseBytes(responseBytes)
 	returnResponseBytes = append(returnResponseBytes, flagResponse...)
 
@@ -120,7 +123,7 @@ func SetName(name string) []byte {
 		namee = append(namee, []byte(val)...)
 	}
 	namee = append(namee, 0x00)
-	fmt.Printf("name is %v", []byte(namee))
+	// fmt.Printf("name is %v", []byte(namee))
 	return namee
 }
 
