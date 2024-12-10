@@ -39,7 +39,7 @@ func main() {
 		}
 
 		receivedData := string(buf[:size])
-		fmt.Print(buf[0:2])
+		fmt.Print(buf[:size])
 		fmt.Printf("Received %d bytes from %s: %s\n", size, source, receivedData)
 
 		// Create an empty response
