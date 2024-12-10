@@ -83,7 +83,8 @@ func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte) []byte {
 	fmt.Print("%v",returnResponseBytes)
 
 	flagResponse := h.SetFlagsWithResponseBytes(responseBytes)
-	returnResponseBytes = append(returnResponseBytes, flagResponse...)
+	returnResponseBytes[3] = flagResponse[0]
+	returnResponseBytes[4] = flagResponse[1]
 
 	questionBytes := make([]byte, 2)
 	binary.BigEndian.PutUint16(questionBytes, 1)
