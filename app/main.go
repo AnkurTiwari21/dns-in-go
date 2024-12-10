@@ -63,7 +63,7 @@ func main() {
 		// fmt.Print(responseBytes)
 		// fmt.Print(len(responseBytes))
 		// fmt.Print("<>")
-		_, err = udpConn.WriteToUDP(responseBytes[:33], source)
+		_, err = udpConn.WriteToUDP(responseBytes, source)
 		if err != nil {
 			fmt.Println("Failed to send response:", err)
 		}
