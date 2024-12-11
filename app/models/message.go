@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -83,7 +84,8 @@ func (h *Header) SetFlagsWithResponseBytes(responseBytes []byte) []byte {
 	return commonFlagsBytes
 }
 
-func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte, size int) []byte {
+// , answerSize int, authorityRecord int, additionalRecord int
+func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte, questionSize int) []byte {
 	returnResponseBytes := make([]byte, 12)
 	returnResponseBytes[0] = responseBytes[0]
 	returnResponseBytes[1] = responseBytes[1]
@@ -96,13 +98,13 @@ func (h *Header) SetRemainingDataAndReturnBytes(responseBytes []byte, size int) 
 	returnResponseBytes[3] = flagResponse[1]
 
 	questionBytes := make([]byte, 2)
-	binary.BigEndian.PutUint16(questionBytes, uint16(size))
+	binary.BigEndian.PutUint16(questionBytes, uint16(questionSize))
 	// returnResponseBytes = append(returnResponseBytes, questionBytes...)
 	returnResponseBytes[4] = questionBytes[0]
 	returnResponseBytes[5] = questionBytes[1]
 
 	answerRecordBytes := make([]byte, 2)
-	binary.BigEndian.PutUint16(answerRecordBytes, uint16(size))
+	binary.BigEndian.PutUint16(answerRecordBytes, uint16(questionSize))
 	// returnResponseBytes = append(returnResponseBytes, answerRecordBytes...)
 	returnResponseBytes[6] = answerRecordBytes[0]
 	returnResponseBytes[7] = answerRecordBytes[1]
@@ -196,30 +198,35 @@ type Answer struct {
 	Data   uint32 `json:"data"`
 }
 
-func (a *Answer) FillAnswerAndReturnBytes(domainName string) []byte {
+func (a *Answer) FillAnswerAndReturnBytes(domainName string, typ int, class int, ttl int, length int, rdata string) []byte {
 	nameBytes := SetName(domainName)
 
 	typeBytes := make([]byte, 2)
-	binary.BigEndian.PutUint16(typeBytes, uint16(1))
+	binary.BigEndian.PutUint16(typeBytes, uint16(typ))
 
 	classBytes := make([]byte, 2)
-	binary.BigEndian.PutUint16(classBytes, uint16(1))
+	binary.BigEndian.PutUint16(classBytes, uint16(class))
 
 	ttlBytes := make([]byte, 4)
-	binary.BigEndian.PutUint32(ttlBytes, uint32(60))
+	binary.BigEndian.PutUint32(ttlBytes, uint32(ttl))
 
 	lengthBytes := make([]byte, 2)
-	binary.BigEndian.PutUint16(lengthBytes, uint16(4))
+	binary.BigEndian.PutUint16(lengthBytes, uint16(length))
 
 	dataBytes := make([]byte, 4)
 
-	// ip := "18.8.8.8"
-	// urlSplit := strings.Split(ip, ".")
-	// for _, val := range urlSplit {
-	// 	// bigEndianForm := make([]byte,1)
-	// 	num, _ := strconv.Atoi(val)
-	// 	dataBytes = append(dataBytes, byte(uint8(num)))
-	// }
+	//number to hex , then pass
+	ip := rdata
+	fmt.Print("ip---",ip)
+	urlSplit := strings.Split(ip, ".")
+	for ind, val := range urlSplit {
+		// bigEndianForm := make([]byte,1)
+		num, _ := strconv.Atoi(val)
+		dataBytes[ind] = byte(uint8(num))
+	}
+
+	fmt.Print("data bytes")
+	fmt.Print(dataBytes)
 
 	commonBytes := []byte{}
 	commonBytes = append(commonBytes, nameBytes...)

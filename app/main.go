@@ -2,9 +2,12 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/binary"
 	"fmt"
 	"net"
+	"os"
+	"time"
 
 	"github.com/codecrafters-io/dns-server-starter-go/app/models"
 )
@@ -16,8 +19,17 @@ func main() {
 	// You can use print statements as follows for debugging, they'll be visible when running tests.
 	fmt.Println("Logs from your program will appear here!")
 
-	// Uncomment this block to pass the first stage
-	//
+	//setting up a custom resolver
+	resolver := &net.Resolver{
+		PreferGo: true,
+		Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+			d := net.Dialer{
+				Timeout: time.Millisecond * time.Duration(10000),
+			}
+			return d.DialContext(ctx, network, os.Args[2])
+		},
+	}
+
 	udpAddr, err := net.ResolveUDPAddr("udp", "127.0.0.1:2053")
 	if err != nil {
 		fmt.Println("Failed to resolve UDP address:", err)
@@ -48,9 +60,9 @@ func main() {
 		response := models.Message{
 			Question: models.Question{},
 		}
-		// bytesExceptHeader := buf[12:size]
-		// domainNameBytes, pos := DecodeDNSName(bytesExceptHeader, 0)
-		// fmt.Print("pointer is ", pos)
+
+		//creating header from request from client
+
 		//setting up flag
 		initialPos := 12
 		domain := []string{}
@@ -58,26 +70,42 @@ func main() {
 		answerBytes := []byte{}
 		for initialPos < size {
 			domainNameBytes, pos := DecodeDNSName(buf[:size], uint16(initialPos))
-			// fmt.Print("domain is ", domainNameBytes)
-			// fmt.Print("pos after coming ...", pos)
-			questionBytes = append(questionBytes, response.Question.SetAllDataAndReturnQuestionBytes(string(domainNameBytes), 1, 1)...)
+			intermediateQuestionBytes := response.Question.SetAllDataAndReturnQuestionBytes(string(domainNameBytes), 1, 1)
+			questionBytes = append(questionBytes, intermediateQuestionBytes...)
 
-			// fmt.Print("question byte is --",questionBytes)
-			// responseBytes = append(responseBytes, questionBytes...)
+			requestToResolver := models.Message{}
+			headerForResolver := requestToResolver.Header.SetRemainingDataAndReturnBytes(buf[:size], int(1))
+
+			finalQueryToSendToResolver := headerForResolver
+			finalQueryToSendToResolver = append(finalQueryToSendToResolver, intermediateQuestionBytes...)
+
+			//establish conn with resolver
+			// resolverUrl := os.Args[2]
+			// fmt.Printf("%v,,,,", resolverUrl)
+			ips, err := resolver.LookupIP(context.Background(), "ip4", string(domainNameBytes))
+			if err != nil {
+				fmt.Errorf("error in ip lookup")
+				return
+			}
+			fmt.Printf("domain %v : %s ", string(domainNameBytes), ips)
+
+			//send this data to resolver
+			//get the response
+			//add that to answerbytes
 
 			domain = append(domain, string(domainNameBytes))
+
+			answerBytes = append(answerBytes, response.Answer.FillAnswerAndReturnBytes(string(domainNameBytes), 1, 1, 60, 4, ips[0].To4().String())...)
+
 			initialPos = int(pos)
 			initialPos += 4
 		}
-		for _, val := range domain {
-			fmt.Print(val)
-			answerBytes = append(answerBytes, response.Answer.FillAnswerAndReturnBytes(val)...)
-			// fmt.Print("answer bytes >>",answerBytes)
-			fmt.Print(" ")
-			// responseBytes = append(responseBytes, answerBytes...)
-		}
+		// for _, val := range domain {
+		// 	fmt.Print(val)
+		// answerBytes = append(answerBytes, response.Answer.FillAnswerAndReturnBytes(val, 1, 1, 60, 4, "")...)
+		// }
 
-		headerBytes := response.Header.SetRemainingDataAndReturnBytes(buf[:size], len(domain)) //sending remaining data and getting header bytes
+		headerBytes := response.Header.SetRemainingDataAndReturnBytes(buf[:size], int(len(domain))) //sending remaining data and getting header bytes
 		responseBytes := response.Bytes(headerBytes)
 		fmt.Print("response byte is --", responseBytes)
 		responseBytes = append(responseBytes, questionBytes...)
